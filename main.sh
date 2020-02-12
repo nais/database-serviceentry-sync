@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
-while sleep 60; do
+while sleep 1; do
   for ns in $(kubectl get namespace -o jsonpath="{ range .items[?(.metadata.annotations['cnrm\.cloud\.google\.com/project-id'])] }{.metadata.name } { end }"); do 
-    ips=$(kubectl get sqlinstances.sql.cnrm.cloud.google.com --namespace "dataplattform" -o jsonpath="{ range .items[*].status.publicIpAddress }  {'-'} { @ }{ '/32\n' }")
+    ips=$(kubectl get sqlinstances.sql.cnrm.cloud.google.com --namespace "$ns" -o jsonpath="{ range .items[*].status.publicIpAddress }  {'-'} { @ }{ '/32\n' }")
     [[ -z "$ips"  ]] && echo "no databases in '$ns', skipping." && continue
     echo -e "$ns: \n$ips"
     f=$(mktemp)
