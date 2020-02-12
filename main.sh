@@ -2,8 +2,8 @@
 set -e
 while sleep 60; do
   for ns in $(kubectl get namespace -o jsonpath="{ range .items[?(.metadata.annotations['cnrm\.cloud\.google\.com/project-id'])] }{.metadata.name } { end }"); do 
-    ips=$(kubectl get sqlinstances.sql.cnrm.cloud.google.com --namespace "$ns" -o jsonpath="{ range .items[*] }  {'-'} { .status.publicIpAddress }{ '/32\n' }")
-    [[ -z "$ips" ]] && echo 'no databases, skipping.' && continue
+    ips=$(kubectl get sqlinstances.sql.cnrm.cloud.google.com --namespace "dataplattform" -o jsonpath="{ range .items[*].status.publicIpAddress }  {'-'} { @ }{ '/32\n' }")
+    [[ "$ips" == "/32\n" ]] && echo 'no databases, skipping.' && continue
     echo -e "$ns: \n$ips"
     f=$(mktemp)
 cat > "$f" <<EOF 
